@@ -1,0 +1,8 @@
+<main>
+	<button mat-raised-button (click)="hiddenfileinput.click()">Load picture</button>
+	<input style="display: none" type="file" (change)="addImage($event.target.files)" #hiddenfileinput />
+
+	<button mat-raised-button (click)="save()">Save</button>
+
+	<canvas id="viewport"></canvas>
+</main>
