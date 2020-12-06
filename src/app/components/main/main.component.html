@@ -1,8 +1,12 @@
 <main>
 	<button mat-raised-button (click)="hiddenfileinput.click()">Load picture</button>
-	<input style="display: none" type="file" (change)="addImage($event.target.files)" #hiddenfileinput />
+	<input style="display: none" type="file" (change)="addImage($event)" #hiddenfileinput />
 
-	<button mat-raised-button (click)="save()">Save</button>
+	<div class="images">
+		<img class="image" *ngFor="let image of images" [src]="sanitizer.bypassSecurityTrustUrl(image.img)" />
+	</div>
+	<button mat-raised-button (click)="createImage()">Save</button>
+	<!-- <button mat-raised-button (click)="save()">Save</button> -->
 
-	<canvas id="viewport"></canvas>
+	<!-- <div id="viewport"></div> -->
 </main>
