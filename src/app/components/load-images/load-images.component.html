@@ -1,0 +1,9 @@
+<main>
+	<button mat-raised-button (click)="hiddenfileinput.click()">Load picture</button>
+	<input style="display: none" type="file" (change)="addImage($event.target.files[0])" #hiddenfileinput />
+
+	<div class="images">
+		<img class="image" *ngFor="let image of images$ | async" [src]="sanitizer.bypassSecurityTrustUrl(image.url)" />
+	</div>
+	<!-- <button mat-raised-button (click)="createImage()">Create image</button> -->
+</main>

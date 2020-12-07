@@ -43,16 +43,16 @@ export class MainComponent implements OnInit {
 		const p = (p) => {
 			p.setup = () => {
 				p.createCanvas(700, 410);
-				p.background(255);
+				p.background(250);
 				this.images.forEach((image) => {
 					this.img.push(p.loadImage(image.img));
 				});
 			};
 			p.draw = () => {
 				this.img.forEach((image, index) => {
-					const scale = 200 / image.height;
-					p.image(image, index * 200, 0, image.width, image.height);
-					image.resize(300, 0);
+					const scale = 300 / image.height;
+					p.scale(scale);
+					p.image(image, index * 200, 0);
 				});
 			};
 		};

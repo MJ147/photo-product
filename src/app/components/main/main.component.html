@@ -5,8 +5,7 @@
 	<div class="images">
 		<img class="image" *ngFor="let image of images" [src]="sanitizer.bypassSecurityTrustUrl(image.img)" />
 	</div>
+	<div id="viewport"></div>
 	<button mat-raised-button (click)="createImage()">Save</button>
 	<!-- <button mat-raised-button (click)="save()">Save</button> -->
-
-	<!-- <div id="viewport"></div> -->
 </main>
