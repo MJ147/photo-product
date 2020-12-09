@@ -1,9 +1,16 @@
 <main>
-	<button mat-raised-button (click)="hiddenfileinput.click()">Load picture</button>
 	<input style="display: none" type="file" (change)="addImage($event.target.files[0])" #hiddenfileinput />
-
+	<span>Select images which you are want to use</span>
 	<div class="images">
-		<img class="image" *ngFor="let image of images$ | async" [src]="sanitizer.bypassSecurityTrustUrl(image.url)" />
+		<img class="image" *ngFor="let image of images" [src]="sanitizer.bypassSecurityTrustUrl(image.url)" />
+		<button class="add-image-wrapper" [class.after-add]="images.length !== 0">
+			<p *ngIf="images.length === 0" class="text">Add first image</p>
+			<button mat-fab color="accent" class="add-image-button" (click)="hiddenfileinput.click()">
+				<mat-icon [inline]="true">close</mat-icon>
+			</button>
+		</button>
 	</div>
-	<!-- <button mat-raised-button (click)="createImage()">Create image</button> -->
+	<button mat-raised-button color="primary" class="create-image-button" (click)="createImage()" *ngIf="images.length !== 0">
+		Create image
+	</button>
 </main>
