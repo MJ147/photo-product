@@ -1,8 +1,13 @@
-<main>
+<main (click)="selectImage(null)">
 	<input style="display: none" type="file" (change)="addImage($event.target.files[0])" #hiddenfileinput />
-	<span>Select images which you are want to use</span>
 	<div class="images">
-		<img class="image" *ngFor="let image of images" [src]="sanitizer.bypassSecurityTrustUrl(image.url)" />
+		<img
+			class="image"
+			*ngFor="let image of images"
+			(click)="selectImage(image); $event.stopPropagation()"
+			[class.selected-image]="image.url === selectedImage?.url"
+			[src]="sanitizer.bypassSecurityTrustUrl(image.url)"
+		/>
 		<button class="add-image-wrapper" [class.after-add]="images.length !== 0">
 			<p *ngIf="images.length === 0" class="text">Add first image</p>
 			<button mat-fab color="accent" class="add-image-button" (click)="hiddenfileinput.click()">
@@ -10,7 +15,22 @@
 			</button>
 		</button>
 	</div>
-	<button mat-raised-button color="primary" class="create-image-button" (click)="createImage()" *ngIf="images.length !== 0">
+
+	<mat-card>
+		<mat-card-content>
+			<mat-label>Colums: </mat-label>
+			<mat-form-field name="columns" appearance="standard">
+				<input matInput type="number" autocomplete="off" maxlength="20" [formControl]="columns" />
+			</mat-form-field>
+
+			<mat-label>Rows: </mat-label>
+			<mat-form-field name="rows">
+				<input matInput type="number" autocomplete="off" maxlength="20" [formControl]="rows" />
+			</mat-form-field>
+		</mat-card-content>
+	</mat-card>
+
+	<button mat-raised-button color="accent" class="create-image-button" (click)="createImage()" *ngIf="images.length !== 0">
 		Create image
 	</button>
 </main>
