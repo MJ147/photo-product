@@ -15,14 +15,20 @@ export class LoadImagesComponent implements OnInit {
 	images: ImageWrapper[];
 	selectedImage: ImageWrapper = null;
 
-	columns: FormControl = new FormControl(1);
-	rows: FormControl = new FormControl(1);
+	columns: FormControl = new FormControl('');
+	rows: FormControl = new FormControl('');
 
 	constructor(private _imageService: ImageService, private _router: Router, public sanitizer: DomSanitizer) {}
 
 	ngOnInit(): void {
 		this._imageService.getImages().subscribe((images) => {
 			this.images = images;
+		});
+		this.columns.valueChanges.subscribe((columns) => {
+			this.selectedImage.columns = columns;
+		});
+		this.rows.valueChanges.subscribe((rows) => {
+			this.selectedImage.rows = rows;
 		});
 	}
 
@@ -36,5 +42,13 @@ export class LoadImagesComponent implements OnInit {
 
 	selectImage(image: ImageWrapper): void {
 		this.selectedImage = image;
+		if (image !== null) {
+			this.columns.setValue(image?.columns);
+			this.rows.setValue(image?.rows);
+		}
+	}
+
+	array(number: number): any[] {
+		return Array(number);
 	}
 }

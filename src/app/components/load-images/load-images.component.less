@@ -17,10 +17,18 @@ main {
 		justify-content: center;
 		margin: 20px;
 
-		.image {
-			max-height: 100%;
-			margin: 0 10px;
+		.one-kind-images {
+			display: flex;
+			flex-direction: column;
+			height: 100%;
 			border: 3px solid transparent;
+
+			.image-rows {
+				.image {
+					max-height: 100%;
+					margin: 0 10px;
+				}
+			}
 		}
 	}
 
@@ -58,14 +66,17 @@ main {
 }
 
 .create-image-button {
+	height: 40px;
 	font-size: 18px;
 	text-transform: uppercase;
+	margin-top: 40px;
+	padding-left: 23px;
 }
 
 mat-card {
 	padding: 24px;
 	width: 100px;
-	height: 100px;
+	height: 70px;
 	background-color: @mat-accent-amber;
 
 	::ng-deep .mat-card-header-text {
@@ -79,29 +90,21 @@ mat-card {
 		}
 	}
 	mat-form-field {
-		width: 30px;
+		width: 40px;
 
 		input {
-			text-align: right;
+			text-align: center;
 		}
-
-		// ::ng-deep {
-		// 	/*change color of label*/
-		// 	.mat-form-field-label {
-		// 		color: white !important;
-		// 	}
-		// 	/*change color of underline*/
-		// 	.mat-form-field-underline {
-		// 		background-color: white !important;
-		// 	}
-		// 	/*change color of underline when focused*/
-		// 	.mat-form-field-ripple {
-		// 		background-color: white !important;
-		// 	}
-		// }
-
-		// input {
-		// 	color: @mat-accent-green !important;
-		// }
 	}
+}
+.row {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	height: 35px;
+}
+
+input[type='number']::-webkit-outer-spin-button,
+input[type='number']::-webkit-inner-spin-button {
+	opacity: 1;
 }
