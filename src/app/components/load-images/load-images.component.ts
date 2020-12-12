@@ -2,7 +2,6 @@ import { DomSanitizer } from '@angular/platform-browser';
 import { ImageService } from './../../services/image.service';
 import { ImageWrapper } from './../../models/image-wrapper';
 import { Component, OnInit } from '@angular/core';
-import { Observable } from 'rxjs';
 import { Router } from '@angular/router';
 import { FormControl } from '@angular/forms';
 
@@ -21,14 +20,20 @@ export class LoadImagesComponent implements OnInit {
 	constructor(private _imageService: ImageService, private _router: Router, public sanitizer: DomSanitizer) {}
 
 	ngOnInit(): void {
+		this.setImages();
+		this.setValueOnFormControlChange(this.selectedImage.rows, this.rows);
+		this.setValueOnFormControlChange(this.selectedImage.columns, this.columns);
+	}
+
+	setImages() {
 		this._imageService.getImages().subscribe((images) => {
 			this.images = images;
 		});
-		this.columns.valueChanges.subscribe((columns) => {
-			this.selectedImage.columns = columns;
-		});
-		this.rows.valueChanges.subscribe((rows) => {
-			this.selectedImage.rows = rows;
+	}
+
+	setValueOnFormControlChange(value: number, formControl: FormControl) {
+		formControl.valueChanges.subscribe((formControlValue) => {
+			value = formControlValue;
 		});
 	}
 
