@@ -37,7 +37,7 @@ export class LoadImagesComponent implements OnInit {
 	}
 
 	createImage(): void {
-		this._router.navigate(['create']);
+		this._router.navigate(['edit']);
 	}
 
 	selectImage(image: ImageWrapper): void {

@@ -10,11 +10,11 @@ interface Image {
 }
 
 @Component({
-	selector: 'app-main',
-	templateUrl: './main.component.html',
-	styleUrls: ['./main.component.less'],
+	selector: 'app-edit-image',
+	templateUrl: './edit-image.component.html',
+	styleUrls: ['./edit-image.component.less'],
 })
-export class MainComponent implements OnInit {
+export class EditImageComponent implements OnInit {
 	images: Image[] = [];
 	isBorder: boolean = true;
 	p5;

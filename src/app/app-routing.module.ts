@@ -1,11 +1,11 @@
-import { MainComponent } from './components/main/main.component';
+import { EditImageComponent } from './components/main/edit-image.component';
 import { LoadImagesComponent } from './components/load-images/load-images.component';
 import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
 
 const routes: Routes = [
 	{ path: '', component: LoadImagesComponent },
-	{ path: 'create', component: MainComponent },
+	{ path: 'edit', component: EditImageComponent },
 ];
 
 @NgModule({

@@ -4,12 +4,12 @@ import { NgModule } from '@angular/core';
 
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
-import { MainComponent } from './components/main/main.component';
+import { EditImageComponent } from './components/main/edit-image.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { LoadImagesComponent } from './components/load-images/load-images.component';
 
 @NgModule({
-	declarations: [AppComponent, MainComponent, LoadImagesComponent],
+	declarations: [AppComponent, EditImageComponent, LoadImagesComponent],
 	imports: [BrowserModule, AppRoutingModule, MaterialModule, BrowserAnimationsModule],
 	providers: [],
 	bootstrap: [AppComponent],
