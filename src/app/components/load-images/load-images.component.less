@@ -21,12 +21,18 @@ main {
 			display: flex;
 			flex-direction: column;
 			height: 100%;
+			width: 20%;
 			border: 3px solid transparent;
 
 			.image-rows {
+				display: inline-flex;
+				align-items: center;
+				width: 100%;
+
 				.image {
 					max-height: 100%;
-					margin: 0 10px;
+					max-width: 100%;
+					object-fit: scale-down;
 				}
 			}
 		}
@@ -50,19 +56,19 @@ main {
 		font-size: 18px;
 		text-transform: uppercase;
 	}
+
+	.add-image-button {
+		mat-icon {
+			font-size: 37px;
+			transform: rotate(45deg);
+		}
+	}
 }
 
 .after-add {
 	width: auto !important;
 	padding: 0 !important;
 	border: none !important;
-}
-
-.add-image-button {
-	mat-icon {
-		font-size: 37px;
-		transform: rotate(45deg);
-	}
 }
 
 .create-image-button {

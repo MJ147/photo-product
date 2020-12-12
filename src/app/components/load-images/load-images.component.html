@@ -8,7 +8,12 @@
 			(click)="selectImage(image); $event.stopPropagation()"
 		>
 			<div class="image-rows" *ngFor="let rows of array(image.rows)" [ngStyle]="{ height: 100 / image.rows + '%' }">
-				<img *ngFor="let colum of array(image.columns)" class="image" [src]="sanitizer.bypassSecurityTrustUrl(image.url)" />
+				<img
+					*ngFor="let colum of array(image.columns)"
+					class="image"
+					[ngStyle]="{ width: 100 / image.columns + '%' }"
+					[src]="sanitizer.bypassSecurityTrustUrl(image.url)"
+				/>
 			</div>
 		</div>
 		<button class="add-image-wrapper" [class.after-add]="images.length !== 0">
