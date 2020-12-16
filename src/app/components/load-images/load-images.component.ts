@@ -21,17 +21,17 @@ export class LoadImagesComponent implements OnInit {
 
 	ngOnInit(): void {
 		this.setImages();
-		this.setValueOnFormControlChange(this.selectedImage.rows, this.rows);
-		this.setValueOnFormControlChange(this.selectedImage.columns, this.columns);
+		this.setValueOnFormControlChange(this.selectedImage?.rows, this.rows);
+		this.setValueOnFormControlChange(this.selectedImage?.columns, this.columns);
 	}
 
-	setImages() {
+	private setImages() {
 		this._imageService.getImages().subscribe((images) => {
 			this.images = images;
 		});
 	}
 
-	setValueOnFormControlChange(value: number, formControl: FormControl) {
+	private setValueOnFormControlChange(value: number, formControl: FormControl) {
 		formControl.valueChanges.subscribe((formControlValue) => {
 			value = formControlValue;
 		});
