@@ -1,9 +1,10 @@
+import { Properties } from './../../models/properties';
 import { DomSanitizer } from '@angular/platform-browser';
 import { ImageService } from './../../services/image.service';
 import { ImageWrapper } from './../../models/image-wrapper';
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
-import { FormControl } from '@angular/forms';
+import { AbstractControl, FormControl, FormGroup } from '@angular/forms';
 
 @Component({
 	selector: 'app-load-images',
@@ -14,15 +15,16 @@ export class LoadImagesComponent implements OnInit {
 	images: ImageWrapper[];
 	selectedImage: ImageWrapper = null;
 
-	columns: FormControl = new FormControl('');
-	rows: FormControl = new FormControl('');
+	propertiesForm = new FormGroup({
+		columns: new FormControl(''),
+		rows: new FormControl(''),
+	});
 
 	constructor(private _imageService: ImageService, private _router: Router, public sanitizer: DomSanitizer) {}
 
 	ngOnInit(): void {
 		this.setImages();
-		this.setValueOnFormControlChange(this.selectedImage?.rows, this.rows);
-		this.setValueOnFormControlChange(this.selectedImage?.columns, this.columns);
+		this.setSelectedImageProperties();
 	}
 
 	private setImages() {
@@ -31,10 +33,25 @@ export class LoadImagesComponent implements OnInit {
 		});
 	}
 
-	private setValueOnFormControlChange(value: number, formControl: FormControl) {
-		formControl.valueChanges.subscribe((formControlValue) => {
-			value = formControlValue;
+	private setSelectedImageProperties() {
+		this.propertiesForm.valueChanges.subscribe((properties: Properties) => {
+			console.log(properties);
+
+			if (this.selectedImage.rows !== properties.rows && properties.rows > 0) {
+				this.selectedImage.rows = properties.rows;
+			}
+
+			if (this.selectedImage.columns !== properties.columns && properties.columns > 0) {
+				this.selectedImage.columns = properties.columns;
+			}
 		});
+	}
+
+	get rowsControl(): AbstractControl {
+		return this.propertiesForm.controls.rows;
+	}
+	get columnsControl(): AbstractControl {
+		return this.propertiesForm.controls.columns;
 	}
 
 	addImage(file: File): void {
@@ -48,8 +65,8 @@ export class LoadImagesComponent implements OnInit {
 	selectImage(image: ImageWrapper): void {
 		this.selectedImage = image;
 		if (image !== null) {
-			this.columns.setValue(image?.columns);
-			this.rows.setValue(image?.rows);
+			this.rowsControl.setValue(this.selectedImage?.rows);
+			this.columnsControl.setValue(this.selectedImage?.columns);
 		}
 	}
 

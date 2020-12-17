@@ -13,21 +13,18 @@ export class EditImageComponent implements OnInit {
 	images: ImageWrapper[] = [];
 	isBorder: boolean = true;
 	p5;
-	canvas;
+	context;
 	startX = 0;
 	x = 0;
+	canvas;
 
-	constructor(
-		private _imageService: ImageService,
-		private _elementRef: ElementRef,
-		private _changeDetectorRef: ChangeDetectorRef,
-		public sanitizer: DomSanitizer,
-	) {}
+	constructor(private _imageService: ImageService, private _elementRef: ElementRef, public sanitizer: DomSanitizer) {}
 
 	ngOnInit(): void {
 		this.setImages();
 		setTimeout(() => {
-			this.createImage();
+			this.createCanvas();
+			this.drawImage();
 		}, 1);
 	}
 
@@ -37,36 +34,34 @@ export class EditImageComponent implements OnInit {
 		});
 	}
 
-	private createImage() {
-		const viewport = this._elementRef.nativeElement.querySelector('viewport');
-		const p = (p) => {
-			p.setup = () => {
-				this.canvas = p.createCanvas(700, 410);
-				p.background(255);
+	private createCanvas() {
+		const p = (canvas) => {
+			this.canvas = canvas;
+			this.canvas.setup = () => {
+				this.context = this.canvas.createCanvas(700, 410);
+				this.canvas.background(255);
 				this.images.forEach((image: ImageWrapper) => {
-					image.img = p.loadImage(image.url);
+					image.img = this.canvas.loadImage(image.url);
 				});
 			};
-			p.draw = () => {
-				this.images.forEach((image) => {
-					const scale = 300 / image.img.height;
-					p.scale(scale);
-					p.image(image.img, this.x, 0);
-					p.scale(image.img.height / 300);
-				});
-			};
-
-			p.mousePressed = () => {
-				p.saveCanvas(this.canvas, 'myCanvas', 'png');
-				this.startX = p.mouseX;
-				console.log('pressed');
-			};
-
-			p.mouseDragged = () => {
-				this.x = (p.mouseX * this.images[0].img.height) / 300;
-			};
+			this.canvas.noSmooth();
 		};
 
-		let canvas = new p5(p, viewport);
+		this.p5 = new p5(p, 'viewport');
+	}
+
+	drawImage() {
+		this.p5.draw = () => {
+			this.images.forEach((image) => {
+				const scale = 300 / image.img.height;
+				this.canvas.scale(scale);
+				this.canvas.image(image.img, this.x, 0);
+				this.canvas.scale(image.img.height / 300);
+			});
+		};
+	}
+
+	saveImage() {
+		this.p5.saveCanvas(this.context, 'myCanvas', 'png');
 	}
 }
