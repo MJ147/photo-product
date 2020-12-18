@@ -52,20 +52,24 @@ export class EditImageComponent implements OnInit {
 		this.p5.draw = () => {
 			this.images.forEach((image, index) => {
 				this.setImageScale(image);
-				const oneImageWidth = this.canvas.width / this.images.length;
-				image.x = index * oneImageWidth + (oneImageWidth - image.img.width * image.scale) / 2;
-				image.y = (this.canvas.height - image.img.height * image.scale) / 2;
-				for (let i = 0; i < image.rows; i++) {
-					const oneRowWidth = oneImageWidth / image.rows;
-					image.x = image.x + i * oneRowWidth + (oneRowWidth - (image.img.width / image.rows) * image.scale) / 2;
-					image.y = image.y;
-					this.canvas.image(
-						image.img,
-						image.x,
-						image.y,
-						(image.img.width * image.scale) / image.rows,
-						(image.img.height * image.scale) / image.rows,
-					);
+				const oneKindImagesWidth = this.canvas.width / this.images.length;
+				const oneKindImagesHeight = ((image.img.height * image.scale) / image.columns) * image.rows;
+				image.x = index * oneKindImagesWidth;
+				image.y = (this.canvas.height - oneKindImagesHeight) / 2;
+				for (let r = 0; r < image.rows; r++) {
+					const oneRowHeight = oneKindImagesHeight / image.rows;
+					const y = image.y + r * oneRowHeight;
+					for (let c = 0; c < image.columns; c++) {
+						const oneRowWidth = oneKindImagesWidth / image.columns;
+						const x = image.x + c * oneRowWidth + (oneRowWidth - (image.img.width / image.columns) * image.scale) / 2;
+						this.canvas.image(
+							image.img,
+							x,
+							y,
+							(image.img.width * image.scale) / image.columns,
+							(image.img.height * image.scale) / image.columns,
+						);
+					}
 				}
 			});
 		};
