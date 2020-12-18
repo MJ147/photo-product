@@ -35,8 +35,6 @@ export class LoadImagesComponent implements OnInit {
 
 	private setSelectedImageProperties() {
 		this.propertiesForm.valueChanges.subscribe((properties: Properties) => {
-			console.log(properties);
-
 			if (this.selectedImage.rows !== properties.rows && properties.rows > 0) {
 				this.selectedImage.rows = properties.rows;
 			}

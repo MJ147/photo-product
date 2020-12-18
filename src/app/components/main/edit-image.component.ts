@@ -44,24 +44,42 @@ export class EditImageComponent implements OnInit {
 					image.img = this.canvas.loadImage(image.url);
 				});
 			};
-			this.canvas.noSmooth();
 		};
-
 		this.p5 = new p5(p, 'viewport');
 	}
 
 	drawImage() {
 		this.p5.draw = () => {
-			this.images.forEach((image) => {
-				const scale = 300 / image.img.height;
-				this.canvas.scale(scale);
-				this.canvas.image(image.img, this.x, 0);
-				this.canvas.scale(image.img.height / 300);
+			this.images.forEach((image, index) => {
+				this.setImageScale(image);
+				const oneImageWidth = this.canvas.width / this.images.length;
+				image.x = index * oneImageWidth + (oneImageWidth - image.img.width * image.scale) / 2;
+				image.y = (this.canvas.height - image.img.height * image.scale) / 2;
+				for (let i = 0; i < image.rows; i++) {
+					const oneRowWidth = oneImageWidth / image.rows;
+					image.x = image.x + i * oneRowWidth + (oneRowWidth - (image.img.width / image.rows) * image.scale) / 2;
+					image.y = image.y;
+					this.canvas.image(
+						image.img,
+						image.x,
+						image.y,
+						(image.img.width * image.scale) / image.rows,
+						(image.img.height * image.scale) / image.rows,
+					);
+				}
 			});
 		};
 	}
 
 	saveImage() {
 		this.p5.saveCanvas(this.context, 'myCanvas', 'png');
+	}
+
+	private setImageScale(image: ImageWrapper): void {
+		let scale = this.canvas.width / this.images.length / image.img.width;
+		if (this.canvas.height < image.img.height * scale) {
+			scale = this.canvas.height / image.img.height;
+		}
+		image.scale = scale;
 	}
 }

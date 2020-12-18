@@ -6,4 +6,6 @@ export interface ImageWrapper {
 	scale: number;
 	columns: number;
 	rows: number;
+	x: number; // x coordinate
+	y: number; // y coordinate
 }

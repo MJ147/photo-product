@@ -18,6 +18,8 @@ export class ImageService {
 			scale: 100,
 			columns: 1,
 			rows: 1,
+			x: 0,
+			y: 0,
 		};
 
 		this.images.push(image);
