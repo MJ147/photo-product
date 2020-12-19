@@ -4,8 +4,17 @@ export interface ImageWrapper {
 	img?: HTMLImageElement;
 	url: SafeUrl;
 	scale: number;
+	copies: Copies;
+	position: Coordinate;
+	dimension?: Coordinate;
+}
+
+export interface Copies {
 	columns: number;
 	rows: number;
-	x: number; // x coordinate
-	y: number; // y coordinate
+}
+
+export interface Coordinate {
+	x: number;
+	y: number;
 }

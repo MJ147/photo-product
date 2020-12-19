@@ -1,6 +1,6 @@
-import { Dimensions } from './../../models/dimension';
+import { Coordinate } from './../../models/image-wrapper';
 import { ImageService } from './../../services/image.service';
-import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { DomSanitizer } from '@angular/platform-browser';
 import * as p5 from 'p5';
 import { ImageWrapper } from 'src/app/models/image-wrapper';
@@ -53,8 +53,8 @@ export class EditImageComponent implements OnInit {
 			this.images.forEach((image, index) => {
 				const space = this.getOneKindImageSpace(image);
 				this.setImageScale(image);
-				image.x = index * space.width;
-				image.y = (this.canvas.height - space.height) / 2;
+				image.position.x = index * space.x;
+				image.position.y = (this.canvas.height - space.y) / 2;
 				this.setImageCopies(image, space);
 			});
 		};
@@ -68,25 +68,25 @@ export class EditImageComponent implements OnInit {
 		image.scale = scale;
 	}
 
-	private getOneKindImageSpace(image: ImageWrapper): Dimensions {
+	private getOneKindImageSpace(image: ImageWrapper): Coordinate {
 		const width = this.canvas.width / this.images.length;
-		const height = ((image.img.height * image.scale) / image.columns) * image.rows;
-		return { width, height };
+		const height = ((image.img.height * image.scale) / image.copies.columns) * image.copies.rows;
+		return { x: width, y: height };
 	}
 
-	private setImageCopies(image: ImageWrapper, space: Dimensions) {
-		for (let r = 0; r < image.rows; r++) {
-			const oneRowHeight = space.height / image.rows;
-			const y = image.y + r * oneRowHeight;
-			for (let c = 0; c < image.columns; c++) {
-				const oneRowWidth = space.width / image.columns;
-				const x = image.x + c * oneRowWidth + (oneRowWidth - (image.img.width / image.columns) * image.scale) / 2;
+	private setImageCopies(image: ImageWrapper, space: Coordinate) {
+		for (let r = 0; r < image.copies.rows; r++) {
+			const oneRowHeight = space.y / image.copies.rows;
+			const y = image.position.y + r * oneRowHeight;
+			for (let c = 0; c < image.copies.columns; c++) {
+				const oneRowWidth = space.x / image.copies.columns;
+				const x = image.position.x + c * oneRowWidth + (oneRowWidth - (image.img.width / image.copies.columns) * image.scale) / 2;
 				this.canvas.image(
 					image.img,
 					x,
 					y,
-					(image.img.width * image.scale) / image.columns,
-					(image.img.height * image.scale) / image.columns,
+					(image.img.width * image.scale) / image.copies.columns,
+					(image.img.height * image.scale) / image.copies.columns,
 				);
 			}
 		}

@@ -1,10 +1,9 @@
-import { Properties } from './../../models/properties';
 import { DomSanitizer } from '@angular/platform-browser';
 import { ImageService } from './../../services/image.service';
-import { ImageWrapper } from './../../models/image-wrapper';
+import { ImageWrapper, Copies } from './../../models/image-wrapper';
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
-import { AbstractControl, FormControl, FormGroup } from '@angular/forms';
+import { FormControl, FormGroup } from '@angular/forms';
 
 @Component({
 	selector: 'app-load-images',
@@ -34,22 +33,15 @@ export class LoadImagesComponent implements OnInit {
 	}
 
 	private setSelectedImageProperties() {
-		this.propertiesForm.valueChanges.subscribe((properties: Properties) => {
-			if (this.selectedImage.rows !== properties.rows && properties.rows > 0) {
-				this.selectedImage.rows = properties.rows;
+		this.propertiesForm.valueChanges.subscribe((copies: Copies) => {
+			if (this.selectedImage.copies.rows !== copies.rows && copies.rows > 0) {
+				this.selectedImage.copies.rows = copies.rows;
 			}
 
-			if (this.selectedImage.columns !== properties.columns && properties.columns > 0) {
-				this.selectedImage.columns = properties.columns;
+			if (this.selectedImage.copies.columns !== copies.columns && copies.columns > 0) {
+				this.selectedImage.copies.columns = copies.columns;
 			}
 		});
-	}
-
-	get rowsControl(): AbstractControl {
-		return this.propertiesForm.controls.rows;
-	}
-	get columnsControl(): AbstractControl {
-		return this.propertiesForm.controls.columns;
 	}
 
 	addImage(file: File): void {
@@ -63,8 +55,8 @@ export class LoadImagesComponent implements OnInit {
 	selectImage(image: ImageWrapper): void {
 		this.selectedImage = image;
 		if (image !== null) {
-			this.rowsControl.setValue(this.selectedImage?.rows);
-			this.columnsControl.setValue(this.selectedImage?.columns);
+			const copies: Copies = { columns: this.selectedImage?.copies.columns, rows: this.selectedImage?.copies.rows };
+			this.propertiesForm.patchValue(copies);
 		}
 	}
 

@@ -7,11 +7,11 @@
 			[class.selected-image]="image.url === selectedImage?.url"
 			(click)="selectImage(image); $event.stopPropagation()"
 		>
-			<div class="image-rows" *ngFor="let rows of array(image.rows)" [ngStyle]="{ height: 100 / image.rows + '%' }">
+			<div class="image-rows" *ngFor="let rows of array(image.copies.rows)" [ngStyle]="{ height: 100 / image.copies.rows + '%' }">
 				<img
-					*ngFor="let colum of array(image.columns)"
+					*ngFor="let colum of array(image.copies.columns)"
 					class="image"
-					[ngStyle]="{ width: 100 / image.columns + '%' }"
+					[ngStyle]="{ width: 100 / image.copies.columns + '%' }"
 					[src]="sanitizer.bypassSecurityTrustUrl(image.url)"
 				/>
 			</div>

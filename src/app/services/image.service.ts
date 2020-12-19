@@ -16,10 +16,8 @@ export class ImageService {
 		const image: ImageWrapper = {
 			url: unsafeImageUrl,
 			scale: 100,
-			columns: 1,
-			rows: 1,
-			x: 0,
-			y: 0,
+			copies: { columns: 1, rows: 1 },
+			position: { x: 0, y: 0 },
 		};
 
 		this.images.push(image);
