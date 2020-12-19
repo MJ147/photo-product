@@ -5,8 +5,17 @@ main {
 	align-items: center;
 	justify-content: center;
 	background-color: rgb(240, 240, 240);
-}
+	overflow: hidden;
 
-::ng-deep canvas {
-	border: 1px solid black;
+	#viewport {
+		max-width: 100%;
+		max-height: 90%;
+		::ng-deep canvas {
+			position: relative;
+			top: -330px;
+			left: -15px;
+			transform: scale(0.5);
+			border: 1px solid black;
+		}
+	}
 }
