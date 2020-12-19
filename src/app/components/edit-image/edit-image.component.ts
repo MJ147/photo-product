@@ -51,11 +51,11 @@ export class EditImageComponent implements OnInit {
 	drawImage() {
 		this.p5.draw = () => {
 			this.images.forEach((image, index) => {
-				const space = this.getOneKindImageSpace(image);
+				this.setOneKindImageSize(image);
 				this.setImageScale(image);
-				image.position.x = index * space.x;
-				image.position.y = (this.canvas.height - space.y) / 2;
-				this.setImageCopies(image, space);
+				image.position.x = index * image.size.x;
+				image.position.y = (this.canvas.height - image.size.y) / 2;
+				this.setImageCopies(image);
 			});
 		};
 	}
@@ -68,18 +68,17 @@ export class EditImageComponent implements OnInit {
 		image.scale = scale;
 	}
 
-	private getOneKindImageSpace(image: ImageWrapper): Coordinate {
-		const width = this.canvas.width / this.images.length;
-		const height = ((image.img.height * image.scale) / image.copies.columns) * image.copies.rows;
-		return { x: width, y: height };
+	private setOneKindImageSize(image: ImageWrapper) {
+		image.size.x = this.canvas.width / this.images.length;
+		image.size.y = ((image.img.height * image.scale) / image.copies.columns) * image.copies.rows;
 	}
 
-	private setImageCopies(image: ImageWrapper, space: Coordinate) {
+	private setImageCopies(image: ImageWrapper) {
 		for (let r = 0; r < image.copies.rows; r++) {
-			const oneRowHeight = space.y / image.copies.rows;
+			const oneRowHeight = image.size.y / image.copies.rows;
 			const y = image.position.y + r * oneRowHeight;
 			for (let c = 0; c < image.copies.columns; c++) {
-				const oneRowWidth = space.x / image.copies.columns;
+				const oneRowWidth = image.size.x / image.copies.columns;
 				const x = image.position.x + c * oneRowWidth + (oneRowWidth - (image.img.width / image.copies.columns) * image.scale) / 2;
 				this.canvas.image(
 					image.img,

@@ -6,7 +6,7 @@ export interface ImageWrapper {
 	scale: number;
 	copies: Copies;
 	position: Coordinate;
-	dimension?: Coordinate;
+	size?: Coordinate;
 }
 
 export interface Copies {
