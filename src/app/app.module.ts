@@ -4,7 +4,7 @@ import { NgModule } from '@angular/core';
 
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
-import { EditImageComponent } from './components/main/edit-image.component';
+import { EditImageComponent } from './components/edit-image/edit-image.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { LoadImagesComponent } from './components/load-images/load-images.component';
 

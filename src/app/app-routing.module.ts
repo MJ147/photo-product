@@ -1,4 +1,4 @@
-import { EditImageComponent } from './components/main/edit-image.component';
+import { EditImageComponent } from './components/edit-image/edit-image.component';
 import { LoadImagesComponent } from './components/load-images/load-images.component';
 import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';

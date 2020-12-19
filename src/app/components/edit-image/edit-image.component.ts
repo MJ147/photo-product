@@ -1,6 +1,6 @@
 import { Dimensions } from './../../models/dimension';
 import { ImageService } from './../../services/image.service';
-import { Component, ElementRef, OnInit } from '@angular/core';
+import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { DomSanitizer } from '@angular/platform-browser';
 import * as p5 from 'p5';
 import { ImageWrapper } from 'src/app/models/image-wrapper';
@@ -15,6 +15,7 @@ export class EditImageComponent implements OnInit {
 	p5: p5;
 	context;
 	canvas;
+	viewPortStyles = this.getViewportStyles();
 
 	constructor(private _imageService: ImageService, public sanitizer: DomSanitizer) {}
 
@@ -23,6 +24,7 @@ export class EditImageComponent implements OnInit {
 		setTimeout(() => {
 			this.createCanvas();
 			this.drawImage();
+			this.viewPortStyles = this.getViewportStyles();
 		}, 1);
 	}
 
@@ -36,7 +38,7 @@ export class EditImageComponent implements OnInit {
 		const p = (canvas) => {
 			this.canvas = canvas;
 			this.canvas.setup = () => {
-				this.context = this.canvas.createCanvas(2000, 1500);
+				this.context = this.canvas.createCanvas(4000, 3000);
 				this.canvas.background(255);
 				this.images.forEach((image: ImageWrapper) => {
 					image.img = this.canvas.loadImage(image.url);
@@ -92,5 +94,14 @@ export class EditImageComponent implements OnInit {
 
 	saveImage() {
 		this.p5.saveCanvas(this.context, 'myCanvas', 'png');
+	}
+
+	getViewportStyles() {
+		const mainHeight: number = document.body.clientHeight;
+		const mainWidth: number = document.body.clientWidth;
+		const scale = (mainHeight / this.canvas?.height) * 0.8;
+		const moveX = (mainWidth - this.canvas?.width * scale) * 0.5;
+
+		return { transform: `scale(${scale})`, left: `${moveX}px` };
 	}
 }
