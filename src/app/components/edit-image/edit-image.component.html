@@ -1,5 +1,5 @@
 <main class="main">
-	<div id="viewport" [ngStyle]="getViewportStyles()"></div>
+	<div id="viewport" [ngStyle]="{ transform: 'scale(' + getViewportScale() + ')', left: getViewportMove() + 'px' }"></div>
 	<button mat-raised-button color="primary" class="create-image-button" (click)="saveImage()">
 		Save image
 		<mat-icon>save_alt</mat-icon>

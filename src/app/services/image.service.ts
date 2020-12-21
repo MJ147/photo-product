@@ -19,6 +19,7 @@ export class ImageService {
 			copies: { columns: 1, rows: 1 },
 			position: { x: 0, y: 0 },
 			size: { x: 0, y: 0 },
+			move: { x: 0, y: 0 },
 		};
 
 		this.images.push(image);

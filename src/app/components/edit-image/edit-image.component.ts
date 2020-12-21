@@ -1,9 +1,8 @@
-import { Coordinate } from './../../models/image-wrapper';
+import { ImageWrapper } from './../../models/image-wrapper';
 import { ImageService } from './../../services/image.service';
 import { Component, OnInit } from '@angular/core';
 import { DomSanitizer } from '@angular/platform-browser';
 import * as p5 from 'p5';
-import { ImageWrapper } from 'src/app/models/image-wrapper';
 
 @Component({
 	selector: 'app-edit-image',
@@ -12,20 +11,20 @@ import { ImageWrapper } from 'src/app/models/image-wrapper';
 })
 export class EditImageComponent implements OnInit {
 	images: ImageWrapper[] = [];
+	selectedImage: ImageWrapper;
 	p5: p5;
 	context;
 	canvas;
-	viewPortStyles = this.getViewportStyles();
+	viewportScale: number;
 
 	constructor(private _imageService: ImageService, public sanitizer: DomSanitizer) {}
 
 	ngOnInit(): void {
 		this.setImages();
-		setTimeout(() => {
-			this.createCanvas();
-			this.drawImage();
-			this.viewPortStyles = this.getViewportStyles();
-		}, 1);
+		this.createCanvas();
+		this.drawImage();
+		this.getViewportScale();
+		this.clickImage();
 	}
 
 	private setImages() {
@@ -39,7 +38,6 @@ export class EditImageComponent implements OnInit {
 			this.canvas = canvas;
 			this.canvas.setup = () => {
 				this.context = this.canvas.createCanvas(4000, 3000);
-				this.canvas.background(255);
 				this.images.forEach((image: ImageWrapper) => {
 					image.img = this.canvas.loadImage(image.url);
 				});
@@ -50,14 +48,65 @@ export class EditImageComponent implements OnInit {
 
 	drawImage() {
 		this.p5.draw = () => {
+			this.canvas.background(255);
 			this.images.forEach((image, index) => {
+				image.position.x = index * image.size.x + image.move.x / this.viewportScale;
+				image.position.y = (this.canvas.height - image.size.y) / 2 + image.move.y / this.viewportScale;
 				this.setOneKindImageSize(image);
 				this.setImageScale(image);
-				image.position.x = index * image.size.x;
-				image.position.y = (this.canvas.height - image.size.y) / 2;
 				this.setImageCopies(image);
 			});
 		};
+	}
+
+	private setImageCopies(image: ImageWrapper) {
+		for (let r = 0; r < image.copies.rows; r++) {
+			const oneRowHeight = image.size.y / image.copies.rows;
+			for (let c = 0; c < image.copies.columns; c++) {
+				const oneRowWidth = image.size.x / image.copies.columns;
+				const x = image.position.x + c * oneRowWidth + (oneRowWidth - (image.img.width / image.copies.columns) * image.scale) / 2;
+				this.canvas.image(
+					image.img,
+					x,
+					image.position.y + r * oneRowHeight,
+					(image.img.width * image.scale) / image.copies.columns,
+					(image.img.height * image.scale) / image.copies.columns,
+				);
+			}
+		}
+	}
+
+	clickImage() {
+		let startX;
+		let startY;
+		this.p5.mousePressed = () => {
+			console.log(1);
+
+			this.images.forEach((image) => {
+				if (this.isPointImage(image)) {
+					this.selectedImage = image;
+					startX = this.p5.mouseX - this.selectedImage.move.x;
+					startY = this.p5.mouseY - this.selectedImage.move.y;
+				}
+			});
+		};
+
+		this.p5.mouseDragged = () => {
+			console.log(2);
+			this.selectedImage.move.x = -startX + this.p5.mouseX;
+			this.selectedImage.move.y = -startY + this.p5.mouseY;
+		};
+	}
+
+	private isPointImage(image: ImageWrapper): boolean {
+		const isPointImageX =
+			this.p5.mouseX >= image.position.x * this.viewportScale &&
+			this.p5.mouseX < (image.position.x + image.size.x) * this.viewportScale;
+		const isPointImageY =
+			this.p5.mouseY >= image.position.y * this.viewportScale &&
+			this.p5.mouseY < (image.position.y + image.size.y) * this.viewportScale;
+
+		return isPointImageX && isPointImageY;
 	}
 
 	private setImageScale(image: ImageWrapper): void {
@@ -73,34 +122,18 @@ export class EditImageComponent implements OnInit {
 		image.size.y = ((image.img.height * image.scale) / image.copies.columns) * image.copies.rows;
 	}
 
-	private setImageCopies(image: ImageWrapper) {
-		for (let r = 0; r < image.copies.rows; r++) {
-			const oneRowHeight = image.size.y / image.copies.rows;
-			const y = image.position.y + r * oneRowHeight;
-			for (let c = 0; c < image.copies.columns; c++) {
-				const oneRowWidth = image.size.x / image.copies.columns;
-				const x = image.position.x + c * oneRowWidth + (oneRowWidth - (image.img.width / image.copies.columns) * image.scale) / 2;
-				this.canvas.image(
-					image.img,
-					x,
-					y,
-					(image.img.width * image.scale) / image.copies.columns,
-					(image.img.height * image.scale) / image.copies.columns,
-				);
-			}
-		}
-	}
-
 	saveImage() {
 		this.p5.saveCanvas(this.context, 'myCanvas', 'png');
 	}
 
-	getViewportStyles() {
+	getViewportScale(): number {
 		const mainHeight: number = document.body.clientHeight;
-		const mainWidth: number = document.body.clientWidth;
-		const scale = (mainHeight / this.canvas?.height) * 0.8;
-		const moveX = (mainWidth - this.canvas?.width * scale) * 0.5;
+		this.viewportScale = (mainHeight / this.canvas?.height) * 0.8;
+		return (mainHeight / this.canvas?.height) * 0.8;
+	}
 
-		return { transform: `scale(${scale})`, left: `${moveX}px` };
+	getViewportMove() {
+		const mainWidth: number = document.body.clientWidth;
+		return (mainWidth - this.canvas?.width * this.viewportScale) * 0.5;
 	}
 }
