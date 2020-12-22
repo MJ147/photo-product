@@ -1,6 +1,7 @@
 import { SafeUrl } from '@angular/platform-browser';
 
 export interface ImageWrapper {
+	id: number;
 	url: SafeUrl;
 	scale: number;
 	copies: Copies;

@@ -14,6 +14,7 @@ export class ImageService {
 	saveImage(file: File): void {
 		const unsafeImageUrl = URL.createObjectURL(file);
 		const image: ImageWrapper = {
+			id: this.images.length,
 			url: unsafeImageUrl,
 			scale: 100,
 			copies: { columns: 1, rows: 1 },

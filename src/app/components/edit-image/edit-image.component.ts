@@ -49,13 +49,24 @@ export class EditImageComponent implements OnInit {
 	drawImage() {
 		this.p5.draw = () => {
 			this.canvas.background(255);
-			this.images.forEach((image, index) => {
-				image.position.x = index * image.size.x + image.move.x / this.viewportScale;
+			this.images.forEach((image) => {
+				image.position.x = image.id * image.size.x + image.move.x / this.viewportScale;
 				image.position.y = (this.canvas.height - image.size.y) / 2 + image.move.y / this.viewportScale;
 				this.setOneKindImageSize(image);
 				this.setImageScale(image);
 				this.setImageCopies(image);
 			});
+
+			if (this.selectedImage != null) {
+				this.canvas.fill(0, 0, 0, 0);
+				this.canvas.strokeWeight(5);
+				this.canvas.rect(
+					this.selectedImage.position.x,
+					this.selectedImage.position.y,
+					this.selectedImage.size.x,
+					this.selectedImage.size.y,
+				);
+			}
 		};
 	}
 
@@ -79,22 +90,31 @@ export class EditImageComponent implements OnInit {
 	clickImage() {
 		let startX;
 		let startY;
-		this.p5.mousePressed = () => {
-			console.log(1);
+		let index;
 
-			this.images.forEach((image) => {
+		this.p5.mousePressed = () => {
+			this.images.some((image, i) => {
 				if (this.isPointImage(image)) {
+					index = i;
 					this.selectedImage = image;
 					startX = this.p5.mouseX - this.selectedImage.move.x;
 					startY = this.p5.mouseY - this.selectedImage.move.y;
+					return;
 				}
 			});
+			if (index !== this.images.length) {
+				this.images.splice(index, 1);
+				this.images.push(this.selectedImage);
+			}
+		};
+
+		this.p5.mouseReleased = () => {
+			this.selectedImage = null;
 		};
 
 		this.p5.mouseDragged = () => {
-			console.log(2);
-			this.selectedImage.move.x = -startX + this.p5.mouseX;
-			this.selectedImage.move.y = -startY + this.p5.mouseY;
+			this.selectedImage.move.x = this.p5.mouseX - startX;
+			this.selectedImage.move.y = this.p5.mouseY - startY;
 		};
 	}
 
