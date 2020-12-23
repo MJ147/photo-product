@@ -4,9 +4,10 @@ export interface ImageWrapper {
 	id: number;
 	url: SafeUrl;
 	scale: number;
+	scaleCorrection: number;
 	copies: Copies;
 	position: Coordinate;
-	move: Coordinate;
+	offset: Coordinate;
 	size?: Coordinate;
 	img?: HTMLImageElement;
 }

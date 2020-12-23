@@ -11,7 +11,8 @@ import * as p5 from 'p5';
 })
 export class EditImageComponent implements OnInit {
 	images: ImageWrapper[] = [];
-	selectedImage: ImageWrapper;
+	selectedImage: ImageWrapper = null;
+	selectedImageBorder: number = 5;
 	p5: p5;
 	context;
 	canvas;
@@ -24,7 +25,7 @@ export class EditImageComponent implements OnInit {
 		this.createCanvas();
 		this.drawImage();
 		this.getViewportScale();
-		this.clickImage();
+		this.setListeners();
 	}
 
 	private setImages() {
@@ -50,16 +51,17 @@ export class EditImageComponent implements OnInit {
 		this.p5.draw = () => {
 			this.canvas.background(255);
 			this.images.forEach((image) => {
-				image.position.x = image.id * image.size.x + image.move.x / this.viewportScale;
-				image.position.y = (this.canvas.height - image.size.y) / 2 + image.move.y / this.viewportScale;
+				image.position.x = image.id * image.size.x + image.offset.x / this.viewportScale;
+				image.position.y = (this.canvas.height - image.size.y) / 2 + image.offset.y / this.viewportScale;
 				this.setOneKindImageSize(image);
 				this.setImageScale(image);
 				this.setImageCopies(image);
 			});
 
-			if (this.selectedImage != null) {
+			if (this.selectedImage !== null) {
 				this.canvas.fill(0, 0, 0, 0);
-				this.canvas.strokeWeight(5);
+				this.canvas.stroke(0, 0, 0, 150);
+				this.canvas.strokeWeight(this.selectedImageBorder);
 				this.canvas.rect(
 					this.selectedImage.position.x,
 					this.selectedImage.position.y,
@@ -87,46 +89,123 @@ export class EditImageComponent implements OnInit {
 		}
 	}
 
-	clickImage() {
+	setListeners() {
 		let startX;
 		let startY;
 		let index;
+		let isSelectedImageBorderPointedX;
+		let isSelectedImageBorderPointedY;
 
 		this.p5.mousePressed = () => {
-			this.images.some((image, i) => {
-				if (this.isPointImage(image)) {
-					index = i;
-					this.selectedImage = image;
-					startX = this.p5.mouseX - this.selectedImage.move.x;
-					startY = this.p5.mouseY - this.selectedImage.move.y;
+			if (this.selectedImage) {
+				isSelectedImageBorderPointedX = this.isImageBorderPointed(
+					this.selectedImage,
+					this.selectedImageBorder,
+					this.selectedImageBorder,
+					'y',
+				);
+				isSelectedImageBorderPointedY = this.isImageBorderPointed(
+					this.selectedImage,
+					this.selectedImageBorder,
+					this.selectedImageBorder,
+					'x',
+				);
+				if (isSelectedImageBorderPointedX || isSelectedImageBorderPointedY) {
+					startX = this.p5.mouseX;
+					startY = this.p5.mouseY;
 					return;
 				}
+			}
+
+			const isImageClicked = this.images.reverse().some((image, i) => {
+				if (this.isImagePointed(image)) {
+					index = i;
+					this.selectedImage = image;
+					startX = this.p5.mouseX - this.selectedImage.offset.x;
+					startY = this.p5.mouseY - this.selectedImage.offset.y;
+					this.images.splice(index, 1);
+					this.images.push(this.selectedImage);
+					return true;
+				}
 			});
-			if (index !== this.images.length) {
-				this.images.splice(index, 1);
-				this.images.push(this.selectedImage);
+			if (!isImageClicked) {
+				this.selectedImage = null;
 			}
 		};
 
-		this.p5.mouseReleased = () => {
-			this.selectedImage = null;
-		};
-
 		this.p5.mouseDragged = () => {
-			this.selectedImage.move.x = this.p5.mouseX - startX;
-			this.selectedImage.move.y = this.p5.mouseY - startY;
+			if (this.selectedImage !== null) {
+				if (isSelectedImageBorderPointedX) {
+					this.selectedImage.scaleCorrection = 1 + (startX - this.p5.mouseX) * 0.001;
+					return;
+				}
+				if (isSelectedImageBorderPointedY) {
+					this.selectedImage.scaleCorrection = 1 + (startY - this.p5.mouseY) * 0.001;
+					return;
+				}
+
+				this.selectedImage.offset.x = this.p5.mouseX - startX;
+				this.selectedImage.offset.y = this.p5.mouseY - startY;
+			}
 		};
+		this.p5.mouseMoved = () => this.setCursor();
 	}
 
-	private isPointImage(image: ImageWrapper): boolean {
-		const isPointImageX =
-			this.p5.mouseX >= image.position.x * this.viewportScale &&
-			this.p5.mouseX < (image.position.x + image.size.x) * this.viewportScale;
-		const isPointImageY =
-			this.p5.mouseY >= image.position.y * this.viewportScale &&
-			this.p5.mouseY < (image.position.y + image.size.y) * this.viewportScale;
+	setCursor() {
+		const isAnyImagePointed = this.images.some((image) => this.isImagePointed(image));
+		const isSelectedImageBorderPointedX = this.isImageBorderPointed(
+			this.selectedImage,
+			this.selectedImageBorder,
+			this.selectedImageBorder,
+			'x',
+		);
+		const isSelectedImageBorderPointedY = this.isImageBorderPointed(
+			this.selectedImage,
+			this.selectedImageBorder,
+			this.selectedImageBorder,
+			'y',
+		);
+		if (isSelectedImageBorderPointedX) {
+			this.canvas.cursor('ns-resize');
+			return;
+		}
+		if (isSelectedImageBorderPointedY) {
+			this.canvas.cursor('ew-resize');
+			return;
+		}
+		if (isAnyImagePointed) {
+			this.canvas.cursor('grab');
+			return;
+		}
+		this.canvas.cursor('default');
+	}
 
-		return isPointImageX && isPointImageY;
+	private isImagePointed(image: ImageWrapper, offset: number = 0, offsetDirection?: string): boolean {
+		let offsetX = offset;
+		let offsetY = offset;
+		if (offsetDirection !== 'x') {
+			offsetY = 0;
+		}
+		if (offsetDirection !== 'y') {
+			offsetX = 0;
+		}
+		const isImageInsidePointedX =
+			this.p5.mouseX >= -offsetX + image?.position.x * this.viewportScale &&
+			this.p5.mouseX < offsetX + (image?.position.x + image?.size.x) * this.viewportScale;
+		const isImageInsidePointedY =
+			this.p5.mouseY >= -offsetY + image?.position.y * this.viewportScale &&
+			this.p5.mouseY < offsetY + (image?.position.y + image?.size.y) * this.viewportScale;
+
+		return isImageInsidePointedX && isImageInsidePointedY;
+	}
+
+	private isImageBorderPointed(
+		image: ImageWrapper,
+		offsetOutside: number = 1,
+		offsetInside: number = offsetOutside,
+		offsetDirection: string,
+	): boolean {
+		return this.isImagePointed(image, offsetOutside, offsetDirection) && !this.isImagePointed(image, -offsetInside, offsetDirection);
 	}
 
 	private setImageScale(image: ImageWrapper): void {
@@ -134,7 +213,7 @@ export class EditImageComponent implements OnInit {
 		if (this.canvas.height < image.img.height * scale) {
 			scale = this.canvas.height / image.img.height;
 		}
-		image.scale = scale;
+		image.scale = scale * image.scaleCorrection;
 	}
 
 	private setOneKindImageSize(image: ImageWrapper) {
