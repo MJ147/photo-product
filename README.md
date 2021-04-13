@@ -5,10 +5,11 @@ A simple graphical web application to combine product photos.
 ## Images:
 
 ### 1. Add images:
+
 ![2021-04-13_18h46_57](https://user-images.githubusercontent.com/44848644/114593591-8d9a8280-9c8c-11eb-9670-c50597705c0a.png)
-
+---
 ![2021-04-13_18h51_19](https://user-images.githubusercontent.com/44848644/114593704-aacf5100-9c8c-11eb-80fe-2c2e5cc6c942.png)
-
+---
 ![2021-04-13_18h51_36](https://user-images.githubusercontent.com/44848644/114593722-b1f65f00-9c8c-11eb-9e77-b51d0d743130.png)
 
 ### 2. Copy images in row and in column:
